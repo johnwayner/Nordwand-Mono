@@ -1,22 +1,27 @@
 .PHONY: install build build-otf build-nerd-font install-mac
 
-FONT_VERSION ?= $(shell git describe --tags --abbrev=0 2>/dev/null || echo 1.0.0)
+# Newest release tag, not the nearest ancestor: release tags sit on main, so
+# from dev the nearest one lags behind.
+FONT_VERSION ?= $(shell git tag --sort=-v:refname 2>/dev/null | head -1 | grep . || echo 1.0.0)
+# Fork marker, appended to the version string (shown in Font Book) so a
+# custom build is never mistaken for an upstream release.
+VERSION_NOTE ?= johnwayner/Nordwand-Mono $(shell git rev-parse --abbrev-ref HEAD) $(shell git rev-parse --short HEAD)$(shell git diff --quiet HEAD || echo -dirty)
 
 install:
 	uv sync
 
 build:
-	uv run python -m generate_font --font-version $(FONT_VERSION) --web-font
+	uv run python -m generate_font --font-version $(FONT_VERSION) --version-note "$(VERSION_NOTE)" --web-font
 	uv run python -m scripts.banner
 	uv run python -m scripts.specimen_pdf
 	uv run python -m scripts.samples
 	uv run python -m scripts.alternatives_markdown
 
 build-font:
-	uv run python -m generate_font --font-version $(FONT_VERSION) --web-font
+	uv run python -m generate_font --font-version $(FONT_VERSION) --version-note "$(VERSION_NOTE)" --web-font
 
 build-otf:
-	uv run python -m generate_font --font-version $(FONT_VERSION) --otf
+	uv run python -m generate_font --font-version $(FONT_VERSION) --version-note "$(VERSION_NOTE)" --otf
 
 build-nerd-font:
 	uv run python -m scripts.nerd_font

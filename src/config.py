@@ -9,6 +9,7 @@ class FontConfig:
 
     family_name: str = "Nordwand Mono"
     font_revision: float = 1.0
+    version_note: str = ""  # Appended to the name table version string
 
     units_per_em: int = 1000
     window_ascent: int = 1025

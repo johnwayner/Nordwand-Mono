@@ -557,6 +557,12 @@ def font_revision(version):
     return major + (minor * 100 + patch) / 1000
 
 
+def version_string():
+    """Name table version: `Version 1.400`, plus `; <note>` for custom builds."""
+    version = f"Version {fc.font_revision:.3f}"
+    return f"{version}; {fc.version_note}" if fc.version_note else version
+
+
 def _style_metadata(weight, italic):
     """Compute style name, PS name, name table entries, and OS/2 flags for a weight/italic combination."""
     name = weight_name(weight)
@@ -581,7 +587,7 @@ def _style_metadata(weight, italic):
             "styleName": style_name,
             "uniqueFontIdentifier": ps_name,
             "fullName": full_name,
-            "version": f"Version {fc.font_revision:.3f}",
+            "version": version_string(),
             "psName": ps_name,
         }
     else:
@@ -592,7 +598,7 @@ def _style_metadata(weight, italic):
             "styleName": legacy_sub,
             "uniqueFontIdentifier": ps_name,
             "fullName": full_name,
-            "version": f"Version {fc.font_revision:.3f}",
+            "version": version_string(),
             "psName": ps_name,
             "typographicFamily": fc.family_name,
             "typographicSubfamily": style_name,
@@ -951,6 +957,11 @@ if __name__ == "__main__":
         metavar="MAJOR.MINOR.PATCH",
         help="Release version written to the name and head tables",
     )
+    parser.add_argument(
+        "--version-note",
+        metavar="TEXT",
+        help="Text appended to the name table version string, e.g. to mark a fork",
+    )
     args = parser.parse_args()
 
     out_root = "fonts"
@@ -967,6 +978,8 @@ if __name__ == "__main__":
 
     if args.font_version:
         fc.font_revision = font_revision(args.font_version)
+    if args.version_note:
+        fc.version_note = args.version_note
 
     build_otf = not args.ttf
     build_ttf_flag = not args.otf
