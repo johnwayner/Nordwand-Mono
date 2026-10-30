@@ -6,6 +6,7 @@ reads as one shape blooming, with no jumps in position or size.
 """
 
 from draw.symbols import (
+    symbol_stroke,
     draw_polyline,
     draw_segment,
     draw_star,
@@ -100,7 +101,7 @@ class CheckMarkGlyph(DingbatGlyph):
 
     def draw(self, pen, dc):
         w = dc.window_width
-        s = self.stroke_ratio * dc.stroke_x
+        s = symbol_stroke(dc, self.stroke_ratio)
         top = dc.x_height + 60
         draw_polyline(
             pen,
@@ -125,7 +126,7 @@ class MultiplicationXGlyph(DingbatGlyph):
     def draw(self, pen, dc):
         cx, cy = self.centre(dc)
         h = self.size_ratio * dc.window_width / 2
-        s = self.stroke_ratio * dc.stroke_x
+        s = symbol_stroke(dc, self.stroke_ratio)
         draw_segment(pen, (cx - h, cy - h), (cx + h, cy + h + self.lift * 2 * h), s)
         draw_segment(pen, (cx - h, cy + h), (cx + h, cy - h), s)
 
@@ -172,7 +173,7 @@ class HeavyRightPointingAngleQuotationMarkOrnamentGlyph(DingbatGlyph):
         draw_polyline(
             pen,
             [(back, cy + hh), (tip, cy), (back, cy - hh)],
-            self.stroke_ratio * dc.stroke_x,
+            symbol_stroke(dc, self.stroke_ratio),
         )
 
 

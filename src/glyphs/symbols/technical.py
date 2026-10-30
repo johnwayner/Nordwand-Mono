@@ -5,7 +5,7 @@ from fontTools.pens.transformPen import TransformPen
 
 from config import FontConfig as fc
 from draw.rect import draw_rect
-from draw.symbols import draw_segment, draw_square
+from draw.symbols import draw_segment, draw_square, symbol_stroke
 from glyphs import Glyph
 from glyphs.special.middle_dot import MiddleDotGlyph
 from glyphs.special.right_arrow import RightArrowGlyph
@@ -85,12 +85,12 @@ class ThereforeGlyph(Glyph):
     unicode = "0x2234"
     offset = 0
     italic_skew = False
-    spread = 0.26  # Horizontal distance of the outer dots from the centre
+    spread = 0.3  # Horizontal distance of the outer dots from the centre
     pointing_up = True
 
     def draw(self, pen, dc):
         w = dc.window_width
-        s = MiddleDotGlyph.stroke_ratio * dc.stroke_x
+        s = symbol_stroke(dc, MiddleDotGlyph.stroke_ratio)
         low, high = s / 2, dc.x_height - s / 2
         apex, base = (high, low) if self.pointing_up else (low, high)
         draw_square(pen, w / 2, apex, s)
@@ -117,10 +117,10 @@ class ReferenceMarkGlyph(Glyph):
         w = dc.window_width
         cx, cy = w / 2, dc.math
         h = self.size_ratio * w / 2
-        s = 0.8 * dc.stroke_x
+        s = symbol_stroke(dc, 0.8)
         draw_segment(pen, (cx - h, cy - h), (cx + h, cy + h), s)
         draw_segment(pen, (cx - h, cy + h), (cx + h, cy - h), s)
-        d = 1.3 * dc.stroke_x
+        d = symbol_stroke(dc, 1.3)
         o = 0.72 * h
         for dx, dy in ((o, 0), (-o, 0), (0, o), (0, -o)):
             draw_square(pen, cx + dx, cy + dy, d)
@@ -140,6 +140,6 @@ class TwoJoinedSquaresGlyph(Glyph):
         w = dc.window_width
         side = self.size_ratio * w
         d = self.shift_ratio * w / 2
-        s = 0.75 * dc.stroke_x
+        s = symbol_stroke(dc, 0.75)
         draw_square(pen, w / 2 - d, dc.math + d, side, s)
         draw_square(pen, w / 2 + d, dc.math - d, side, s)

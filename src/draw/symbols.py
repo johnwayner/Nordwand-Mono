@@ -8,6 +8,13 @@ from draw.polygon import draw_polygon
 from draw.rect import draw_rect
 
 
+def symbol_stroke(dc, ratio=1.0, damping=0.5):
+    """Stroke for symbol details: `ratio` of the regular stroke_x, changing
+    with the weight at `damping` times the rate of the text strokes, so small
+    symbols stay open in heavy weights and visible in light ones."""
+    return ratio * (dc.default_stroke + damping * (dc.stroke_x - dc.default_stroke))
+
+
 def ccw(points):
     """Return the polygon's points in counterclockwise order."""
     area = sum(

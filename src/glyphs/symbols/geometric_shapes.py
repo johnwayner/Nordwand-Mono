@@ -7,6 +7,7 @@ from math import sqrt
 
 from draw.rect import draw_rect
 from draw.symbols import (
+    symbol_stroke,
     draw_half_disc,
     draw_polyline,
     draw_ring,
@@ -32,7 +33,7 @@ class GeometricGlyph(Glyph):
         return self.size_ratio * dc.window_width
 
     def stroke(self, dc):
-        return self.stroke_ratio * dc.stroke_x
+        return symbol_stroke(dc, self.stroke_ratio)
 
 
 # Circles
@@ -216,7 +217,9 @@ class BallotBoxGlyph(GeometricGlyph):
         cx, cy = self.centre(dc)
         side, s = self.size(dc), self.stroke(dc)
         draw_square(pen, cx, cy, side, s)
-        h = side / 2 - 2.2 * s  # Half-size of the mark inside the box
+        # Half-size of the mark: a fixed clearance inside the outline
+        h = side / 2 - s - 0.75 * dc.default_stroke
+        s = 0.85 * s
         if self.mark == "check":
             draw_polyline(
                 pen,
@@ -325,7 +328,7 @@ class WarningSignGlyph(GeometricGlyph):
         top = bottom + half * sqrt(3)
         draw_triangle(pen, [(w / 2 - half, bottom), (w / 2 + half, bottom), (w / 2, top)], s)
         # Exclamation mark
-        b = 0.9 * dc.stroke_x
+        b = symbol_stroke(dc, 0.9)
         dot_top = bottom + 2.2 * s + b
         draw_rect(pen, w / 2 - b / 2, bottom + 2.2 * s, w / 2 + b / 2, dot_top)
         draw_rect(pen, w / 2 - b / 2, dot_top + 0.8 * b, w / 2 + b / 2, top - 3.4 * s)
