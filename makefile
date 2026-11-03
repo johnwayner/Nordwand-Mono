@@ -5,7 +5,7 @@
 FONT_VERSION ?= $(shell git tag --sort=-v:refname 2>/dev/null | head -1 | grep . || echo 1.0.0)
 # Fork marker, appended to the version string (shown in Font Book) so a
 # custom build is never mistaken for an upstream release.
-VERSION_NOTE ?= johnwayner/Nordwand-Mono $(shell git rev-parse --abbrev-ref HEAD) $(shell git rev-parse --short HEAD)$(shell git diff --quiet HEAD || echo -dirty)
+VERSION_NOTE ?= johnwayner/Nordwand-Mono $(shell git rev-parse --abbrev-ref HEAD) $(shell git rev-parse --short HEAD)$(shell test -z "$$(git status --porcelain)" || echo -dirty)
 
 install:
 	uv sync
